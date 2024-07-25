@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xcx.mapper.OrderMapper">
+
+    <resultMap id="orderToCustomer" type="com.xcx.pojo.Order">
+        <!--第一层order属性-->
+        <id property="orderId" column="order_id"/>
+        <!--<result property="orderName" column="order_name"/>-->
+        <!--<result property="customerId" column="customer_id"/>-->
+        <!--第二层customer属性,association表示给对象赋值-->
+        <association property="customer" javaType="com.xcx.pojo.Customer">
+            <id property="customerId" column="customer_id"/>
+            <!--<result property="customerName" column="customer_name"/>-->
+        </association>
+    </resultMap>
+
+    <select id="queryOrderById" resultMap="orderToCustomer">
+        select *
+        from t_order tor
+        join t_customer tc on tor.customer_id = tc.customer_id
+        where tor.order_id = #{orderId}
+    </select>
+
+
+
+</mapper>

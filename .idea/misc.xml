@@ -1,0 +1,27 @@
+<project version="4">
+  <component name="CodeInsightWorkspaceSettings">
+    <option name="optimizeImportsOnTheFly" value="true" />
+  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/ssm-spring-part/pom.xml" />
+        <option value="$PROJECT_DIR$/ssm-Mybatis-part/pom.xml" />
+        <option value="$PROJECT_DIR$/ssm-springmvc-part/pom.xml" />
+        <option value="$PROJECT_DIR$/ssm-ssm-part/pom.xml" />
+        <option value="$PROJECT_DIR$/ssm-springboot-part/pom.xml" />
+        <option value="$PROJECT_DIR$/ssm-springboot-part/_01-springboot-quick/pom.xml" />
+        <option value="$PROJECT_DIR$/ssm-MyBatis-Plus-part/_01-MyBatis-Plus-quick/pom.xml" />
+      </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/ssm-springboot-part/pom.xml" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

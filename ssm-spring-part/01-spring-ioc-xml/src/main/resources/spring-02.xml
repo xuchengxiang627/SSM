@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--引用和被引用的组件必须全部在ioc容器-->
+    <!--1. 单个构造参数注入-->
+    <!--1.1 将他们都存放在ioc容器中-->
+    <bean id="userDao_1" class="com.xcx.ioc_02.UserDao" />
+    <bean id="userService_1" class="com.xcx.ioc_02.UserService">
+        <!--构造参数传值的di配置
+            value   直接属性值
+            ref     引用其他的 bean 的 id 值-->
+        <constructor-arg ref="userDao_1" />
+    </bean>
+
+    <!--2. 多个构造参数注入-->
+    <bean id="userService_2" class="com.xcx.ioc_02.UserService">
+        <!--方案一：按构造参数顺序赋值-->
+        <constructor-arg value="18"/>
+        <constructor-arg value="张三"/>
+        <constructor-arg ref="userDao_1" />
+    </bean>
+    <bean id="userService_3" class="com.xcx.ioc_02.UserService">
+        <!--方案二：按构造参数名字赋值-->
+        <constructor-arg name="name" value="李四"/>
+        <constructor-arg name="age" value="10"/>
+        <constructor-arg name="userDao" ref="userDao_1" />
+    </bean>
+    <bean id="userService_4" class="com.xcx.ioc_02.UserService">
+        <!--方案三：按构造参数下角标赋值-->
+        <constructor-arg index="0" value="20"/>
+        <constructor-arg index="1" value="王五"/>
+        <constructor-arg index="2" ref="userDao_1" />
+    </bean>
+
+    <!--3. 基于setter方法注入-->
+    <bean id="userService_5" class="com.xcx.ioc_02.UserService">
+        <!--name 属性名setter方法名去掉setter并把首字母小写的值
+                   setAge -> name = age-->
+        <property name="age" value="20"/>
+        <property name="userDao" ref="userDao_1"/>
+    </bean>
+
+
+</beans>

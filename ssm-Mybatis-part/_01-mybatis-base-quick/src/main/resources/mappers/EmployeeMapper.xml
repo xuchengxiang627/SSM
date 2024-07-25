@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--用xml写sql语句-->
+<!-- namespace等于mapper接口类的全限定名,这样实现对应 -->
+<mapper namespace="com.xcx.mapper.EmployeeMapper">
+
+    <!-- 查询使用 select标签  标签内编写SQL语句
+            - 方法名和SQL的id一致      Mapper中的方法不能重载
+            - 方法返回值和resultType一致
+            - 方法的参数和SQL的参数一致
+            - 接口的全类名和映射配置文件的名称空间一致
+     -->
+    <select id="queryById" resultType="com.xcx.pojo.Employee">
+        <!--
+            #{key}代表动态传入的参数,并且进行赋值 用占位符，相当于empId = ?
+            ${key}拼接字符串，相当于"empId = " + key
+        -->
+        select * from
+        t_emp where emp_id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        <!--传入简单值，如int，Integer，String，key可以随便取名，但最好和参数的名字一样-->
+        delete from t_emp where emp_id = #{id}
+    </delete>
+
+    <!--useGeneratedKeys="true" 想要获取自增主键值，keyColumn为主键的列名，keyProperty为主键的属性名-->
+    <insert id="insert" useGeneratedKeys="true" keyColumn="emp_id" keyProperty="empId">
+        <!--若主键非自增长，可以使用selectKey标签交给mybatis进行维护
+            Order属性：before：执行sql语句前执行selectKey标签中的sql语句
+                      after：执行sql语句后执行selectKey标签中的sql语句
+            ResultType：返回值类型
+            keyProperty：返回值属性名
+        -->
+        <!--<selectKey resultType="string" keyProperty="uId" order="BEFORE">-->
+        <!--    select REPLACE(UUID(),'-','')  // 随机生成UID-->
+        <!--</selectKey>-->
+
+        <!--传入实体对象，key为传入对象的属性名-->
+        insert into t_emp(emp_name,emp_salary) values(#{empName},#{empSalary})
+    </insert>
+
+    <select id="queryByNameAndSalary" resultType="com.xcx.pojo.Employee">
+        <!--
+            传入多个简单值，key的取值不能随意取值，也无法根据参数名取值，
+            方案1：对方法形参列表使用注解@Param("value值")，根据别名赋值
+            方案2：mybatis默认机制 形参列表从左到右，依次arg0,arg1,arg2...或param1,param2,param3...
+        -->
+        select emp_id empId,emp_name empName, emp_salary empSalary from
+        t_emp where emp_name = #{a} and emp_salary = #{b}
+    </select>
+        <!-- 传入 map 对象，key为map的key值-->
+
+
+    <!--
+        输出为简单类型，输出类型为类的全限定符或别名
+        基本数据类型 int，double -> _int, _double
+        包装数据类型 Integer，Double -> int, integer，double
+        集合容器类型 Map， List，HashMap -> map, list，hashmap
+        可以在config.xml中配置别名
+        <typeAliases>
+            <typeAlias alias="emp" type="com.xcx.pojo.Employee"/>
+        </typeAliases>
+        或者
+        <typeAliases>
+            <package name="com.xcx.pojo"/> // 将此包下的所有Bean的首字母小写作为别名
+        </typeAliases>
+        此时可以用@Alias注解指定别名（不能单独使用）
+    -->
+    <select id="queryNameById" resultType="string">
+        select emp_name from t_emp where emp_id = #{id}
+    </select>
+
+    <select id="queryEmpNameAndMaxSalary" resultType="map">
+            select
+                emp_name 员工姓名,
+                emp_salary 员工工资,
+                (select avg(emp_salary) from t_emp) 平均工资
+            from t_emp where emp_salary = (select max(emp_salary) from t_emp)
+    </select>
+
+    <!--
+        id: 在select标签中resultMap属性的引用值
+        type: 返回值类型
+    -->
+    <resultMap id="mapId" type="com.xcx.pojo.Employee">
+        <!--id为主键映射关系-->
+        <id property="empId" column="emp_id"/>
+        <!--result为普通映射关系-->
+        <result property="empName" column="emp_name"/>
+        <result property="empSalary" column="emp_salary"/>
+    </resultMap>
+
+    <select id="testResultMap" resultMap="mapId">
+        select * from t_emp where emp_id = #{id}
+    </select>
+
+
+    <!--*********************************************************************************************    -->
+    <!--两个参数动态传入，测试if和where标签，若不传入则不加对应条件-->
+    <select id="testIfAndWhere" resultType="emp">
+        select * from t_emp
+        <where>  <!--where标签 可以自动添加where并删除and或or-->
+            <if test="name != null">
+                emp_name = #{name}
+            </if>
+            <if test="salary != null and salary &gt; 100">
+                or emp_salary > #{salary}
+            </if>
+        </where>
+    </select>
+
+    <update id="testSet">
+        update t_emp
+        <set> <!--set标签 可以自动添加set并删除逗号,但至少保持一个满足-->
+            <if test="empName != null">
+                emp_name = #{empName},
+            </if>
+            <if test="empSalary != null">
+                emp_salary = #{empSalary}
+            </if>
+        </set>
+        where emp_id = #{empId}
+    </update>
+
+    <!--使用trim标签控制条件部分两端是否包含某些字符
+
+        - prefix属性：指定要动态添加的前缀
+        - suffix属性：指定要动态添加的后缀
+        - prefixOverrides属性：指定要动态去掉的前缀，使用“|”分隔有可能的多个值
+        - suffixOverrides属性：指定要动态去掉的后缀，使用“|”分隔有可能的多个值
+
+        List<Employee> selectEmployeeByConditionByTrim(Employee employee)
+        <select id="selectEmployeeByConditionByTrim" resultType="com.atguigu.mybatis.entity.Employee">
+            select emp_id,emp_name,emp_age,emp_salary,emp_gender
+            from t_emp
+            <trim prefix="where" suffixOverrides="and|or">
+                <if test="empName != null">
+                    emp_name=#{empName} and
+                </if>
+                <if test="empSalary &gt; 3000">
+                    emp_salary>#{empSalary} and
+                </if>
+                <if test="empAge &lt;= 20">
+                    emp_age=#{empAge} or
+                </if>
+                <if test="empGender=='male'">
+                    emp_gender=#{empGender}
+                </if>
+            </trim>
+        </select>
+    -->
+
+    <!--choose + when + otherwise
+        在多个分支条件中，仅执行一个。
+        - 从上到下依次执行条件判断
+        - 遇到的第一个满足条件的分支会被采纳
+        - 被采纳分支后面的分支都将不被考虑
+        - 如果所有的when分支都不满足，那么就执行otherwise分支
+
+        List<Employee> selectEmployeeByConditionByChoose(Employee employee)
+        <select id="selectEmployeeByConditionByChoose" resultType="com.atguigu.mybatis.entity.Employee">
+            select emp_id,emp_name,emp_salary from t_emp
+            where
+            <choose>
+                <when test="empName != null">emp_name=#{empName}</when>
+                <when test="empSalary &lt; 3000">emp_salary &lt; 3000</when>
+                <otherwise>1=1</otherwise>
+            </choose>
+             第一种情况：第一个when满足条件 where emp_name=?
+             第二种情况：第二个when满足条件 where emp_salary < 3000
+             第三种情况：两个when都不满足 where 1=1 执行了otherwise
+        </select>
+    -->
+
+    <select id="testForeach" resultType="emp">
+        select * from t_emp where emp_id in
+        <!--collection属性：要遍历的集合
+            item属性：遍历集合的过程中能得到每一个具体对象，在item属性中设置一个名字，将来通过这个名字引用遍历出来的对象
+            separator属性：指定当foreach标签的标签体重复拼接字符串时，各个标签体字符串之间的分隔符
+            open属性：指定整个循环把字符串拼好后，字符串整体的前面要添加的字符串
+            close属性：指定整个循环把字符串拼好后，字符串整体的后面要添加的字符串
+            index属性：这里起一个名字，便于后面引用
+                        遍历List集合，这里能够得到List集合的索引值
+                        遍历Map集合，这里能够得到Map集合的key -->
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
+    <!-- 使用sql标签抽取重复出现的SQL片段 -->
+    <sql id="mySelectSql">
+        select emp_id,emp_name,emp_salary from t_emp
+    </sql>
+
+    <select id="testSql" resultType="emp">
+        <!-- 使用include标签引用声明的SQL片段 -->
+        <include refid="mySelectSql"/>
+    </select>
+
+
+    <select id="testPage" resultType="emp">
+        <include refid="mySelectSql"/>
+    </select>
+
+
+</mapper>

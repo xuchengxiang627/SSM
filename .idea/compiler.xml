@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="01-spring-ioc-xml" />
+        <module name="_01-mybatis-base-quick" />
+        <module name="_03-spring-ioc-java" />
+        <module name="_01-MyBatis-Plus-quick" />
+        <module name="_02-springmvc-restful" />
+        <module name="02-spring-ioc-annotation" />
+        <module name="_02-mybatis-toSingleAndMultiTable" />
+        <module name="_04-spring-aop-annotation" />
+        <module name="ssm-ssm-part" />
+        <module name="_05-spring-tx-annotation" />
+        <module name="_01-springmvc-quick" />
+        <module name="_01-springboot-quick" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="_01-springboot-base-quick" target="17" />
+      <module name="ssm-springboot-part" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="_01-MyBatis-Plus-quick" options="-parameters" />
+      <module name="_01-springboot-base-quick" options="-parameters" />
+      <module name="_01-springboot-quick" options="-parameters" />
+    </option>
+  </component>
+</project>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xcx.mapper.CustomerMapper">
+
+    <resultMap id="customerToOrder" type="com.xcx.pojo.Customer">
+        <!--第一层customer属性-->
+        <id property="customerId" column="customer_id"/>
+        <!--<result property="customerName" column="customer_name"/>-->
+        <!--第二层order属性,collection表示给集合赋值 ofType表示集合中元素的类型-->
+        <collection property="orderList" ofType="com.xcx.pojo.Order">
+            <id property="orderId" column="order_id"/>
+            <!--<result property="orderName" column="order_name"/>-->
+            <!--<result property="customerId" column="customer_id"/>-->
+        </collection>
+    </resultMap>
+
+    <select id="queryAllCustomer" resultMap="customerToOrder">
+        select *
+        from t_customer tc
+        left join t_order tor on tor.customer_id = tc.customer_id
+    </select>
+
+
+
+</mapper>
